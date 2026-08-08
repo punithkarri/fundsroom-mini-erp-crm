@@ -4,7 +4,7 @@
   "description": "Mini ERP + CRM Operations Portal Backend",
   "main": "dist/server.js",
   "scripts": {
-    "build": "tsc",
+    "build": "prisma generate && tsc",
     "start": "node dist/server.js",
     "dev": "nodemon --watch src -e ts --exec ts-node src/server.ts",
     "prisma:generate": "prisma generate",
