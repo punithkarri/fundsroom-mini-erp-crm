@@ -4,6 +4,14 @@ A lightweight, robust ERP and CRM operations portal for wholesale and distributi
 
 ---
 
+## 📌 Submission & Documentation Links
+* **Primary Case Study Documentation**: [docs/FundsRoom-Case-Study-Documentation.md](docs/FundsRoom-Case-Study-Documentation.md)
+* **System Architecture Details**: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
+* **Recruiter Submission Checklist**: [docs/SUBMISSION.md](docs/SUBMISSION.md)
+* **Postman API Collection**: [postman/FundsRoom-ERP.postman_collection.json](postman/FundsRoom-ERP.postman_collection.json)
+
+---
+
 ## 1. Business Context & Problem Statement
 
 Wholesale and distribution companies manage high-volume customer accounts, inventory catalog thresholds, and sales transactions. Without synchronization:
