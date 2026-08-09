@@ -8,9 +8,9 @@ This file contains the final submission credentials, file locations, and deploym
 
 * **GitHub Repository**: [https://github.com/punithkarri/fundsroom-mini-erp-crm](https://github.com/punithkarri/fundsroom-mini-erp-crm)
 * **Direct Documentation Link**: [https://github.com/punithkarri/fundsroom-mini-erp-crm/blob/main/docs/FundsRoom-Case-Study-Documentation.md](https://github.com/punithkarri/fundsroom-mini-erp-crm/blob/main/docs/FundsRoom-Case-Study-Documentation.md)
-* **Live Frontend URL**: `STATUS: Pending verification` (Client domain mapping and DNS propagation in progress)
-* **Live Backend URL**: `STATUS: Pending verification` (Server cold-start or domain propagation pending)
-* **API Health Endpoint**: `STATUS: Pending verification`
+* **Live Frontend URL**: [https://frontend-three-sigma-88.vercel.app](https://frontend-three-sigma-88.vercel.app)
+* **Live Backend URL**: [https://fundsroom-erp-backend.onrender.com](https://fundsroom-erp-backend.onrender.com)
+* **API Health Endpoint**: [https://fundsroom-erp-backend.onrender.com/api/health](https://fundsroom-erp-backend.onrender.com/api/health)
 * **Demo Recording Link**: `[Recording link to be added after recording]`
 
 ---

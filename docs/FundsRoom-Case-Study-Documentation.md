@@ -465,9 +465,9 @@ npm run prisma:seed
 * **Production Database**: Neon PostgreSQL (Serverless). Tables migrated and seeded.
 * **Production Backend**: Render (Web Service).
   * **Backend URL**: [fundsroom-erp-backend.onrender.com](https://fundsroom-erp-backend.onrender.com)
-  * **API Health**: `STATUS: Pending verification` (First deployment cold-start / domain propagation pending).
+  * **API Health**: [https://fundsroom-erp-backend.onrender.com/api/health](https://fundsroom-erp-backend.onrender.com/api/health) (`STATUS: Verified`)
 * **Production Frontend**: Vercel.
-  * **Frontend URL**: `STATUS: Pending verification`
+  * **Frontend URL**: [https://frontend-three-sigma-88.vercel.app](https://frontend-three-sigma-88.vercel.app)
 * **CORS Rules**: Currently set to `*` to allow initialization, to be restricted to the exact Vercel subdomain.
 
 ---
@@ -567,5 +567,5 @@ fundsroom-mini-erp-crm/
 | **API validations** | Express Zod validator intercepting payload errors | COMPLETED |
 | **Integration Suite** | 25 scenario test cases verifying all business rules | COMPLETED |
 | **Live Database** | Neon Serverless PostgreSQL Cloud Database | COMPLETED |
-| **Production Server** | Render Node REST Server | PENDING VERIFICATION |
-| **Production Frontend**| Vercel client deployment | PENDING VERIFICATION |
+| **Production Server** | Render Node REST Server | COMPLETED |
+| **Production Frontend**| Vercel client deployment | COMPLETED |
