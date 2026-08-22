@@ -30,7 +30,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"Admin@123\"\n}",
+              "raw": "{\n  \"email\": \"{{loginEmail}}\",\n  \"password\": \"{{loginPassword}}\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -887,5 +887,14 @@
         }
       ]
     }
+  ],
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:5000" },
+    { "key": "token", "value": "" },
+    { "key": "loginEmail", "value": "" },
+    { "key": "loginPassword", "value": "" },
+    { "key": "workOrderId", "value": "" },
+    { "key": "transferId", "value": "" },
+    { "key": "orderId", "value": "" }
   ]
 }

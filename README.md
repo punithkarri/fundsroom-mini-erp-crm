@@ -214,6 +214,8 @@ npm test
 
 Seeded account emails are `admin@example.com`, `operations@example.com`, and `sales@example.com`. Their seed passwords are supplied only through `SEED_ADMIN_PASSWORD`, `SEED_OPERATIONS_PASSWORD`, and `SEED_SALES_PASSWORD` in the local environment.
 
+For an existing database, `npm run prisma:seed` idempotently upserts only configured users and never deletes application data. The legacy full demo dataset is retained as `npm run prisma:seed:demo` and must not be run against production.
+
 ---
 
 ## 11. Known Limitations & Implementation Decisions

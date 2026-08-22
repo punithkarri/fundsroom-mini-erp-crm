@@ -55,7 +55,7 @@ This script outlines the timeline, scene configuration, and speaking points for 
 * **Speaking Points**: "If a representative attempts to confirm an order that exceeds available warehouse stock, the transaction fails, throws a validation error, and rolls back all operations completely, preventing negative stock or partial dispatches."
 
 ### 9. Role Permissions Safeguards (08:00 – 09:00)
-* **Visual**: Log in as `warehouse@example.com`. Try to manually navigate to `/customers` in the browser bar or inspect a restricted action. Show the UI redirection or the network log returning a `403 Forbidden` response.
+* **Visual**: Log in as Sales and try to manually navigate to `/work-orders` or inspect a restricted action. Show the UI redirection or the network log returning a `403 Forbidden` response.
 * **Speaking Points**: "Role checks are enforced strictly on the backend. Attempting to invoke customer operations as a warehouse worker triggers a `403 Forbidden` JSON response, preventing API manipulation."
 
 ### 10. Postman Collection & Deployment Verification (09:00 – 10:00)

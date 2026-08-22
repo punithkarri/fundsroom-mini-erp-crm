@@ -25,6 +25,8 @@ Use these seeded accounts to evaluate role-based authorization (RBAC) behavior i
 | **OPERATIONS** | `operations@example.com` | Configured locally | Inventory, work orders, material checks, transfers |
 | **SALES** | `sales@example.com` | Configured locally | Customers, customer orders, reservations |
 
+Production user provisioning uses the non-destructive `npm run prisma:seed` command with private `SEED_*_PASSWORD` variables. It upserts configured accounts without deleting application data.
+
 ---
 
 ## 3. Project File Locators
