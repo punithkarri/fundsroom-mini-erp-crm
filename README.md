@@ -1,4 +1,12 @@
-# Mini ERP + CRM Operations Portal
+# Mini Operations ERP + CRM Portal
+
+## Operations ERP (Primary Workflow)
+
+The primary workflow is location-aware inventory operations: Admin, Operations, and Sales users authenticate with JWT and use the inventory, work-order, transfer, and customer-order modules. Each `Item` records SKU, category, location, batch, physical quantity, reserved quantity, and calculated available quantity (`physical - reserved`).
+
+Work orders expose required, available, and shortage quantities (`max(required - available, 0)`) without changing stock. Internal transfers follow `REQUESTED -> DISPATCHED -> RECEIVED`; dispatch locks and decreases source physical stock, while receipt increases destination stock exactly once. Customer-order reservations lock inventory rows with PostgreSQL `SELECT ... FOR UPDATE`, so concurrent reservations cannot oversubscribe stock. Cancellation releases reservations.
+
+Primary APIs are `/api/inventory`, `/api/work-orders`, `/api/transfers`, `/api/customer-orders`, `/api/customers`, `/api/dashboard/stats`, and `/api/auth/login`/`me`. The focused Operations suite runs against Neon with `npm run test:operations`; it covers login, RBAC, inventory arithmetic, work orders, transfers, reservation rollback, duplicate state protection, and concurrent reservations.
 
 A lightweight, robust ERP and CRM operations portal for wholesale and distribution companies. Built with Node.js, Express, TypeScript, React, and PostgreSQL using Prisma ORM.
 
@@ -204,12 +212,7 @@ npm test
 
 ## 10. Test Login Accounts
 
-Use these credentials to sign in and test individual role operations:
-
-* **ADMIN**: `admin@example.com` / `Admin@123`
-* **SALES**: `sales@example.com` / `Sales@123`
-* **WAREHOUSE**: `warehouse@example.com` / `Warehouse@123`
-* **ACCOUNTS**: `accounts@example.com` / `Accounts@123`
+Seeded account emails are `admin@example.com`, `operations@example.com`, and `sales@example.com`. Their seed passwords are supplied only through `SEED_ADMIN_PASSWORD`, `SEED_OPERATIONS_PASSWORD`, and `SEED_SALES_PASSWORD` in the local environment.
 
 ---
 

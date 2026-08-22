@@ -1,13 +1,19 @@
 # System Architecture Document
 
-This document explains the structural design, dataflows, authentication mechanics, and transactional guarantees implemented in the **Mini ERP + CRM Operations Portal**.
+This document explains the structural design, dataflows, authentication mechanics, and transactional guarantees implemented in the **Mini Operations ERP + CRM Portal**.
+
+## Operations ERP Contract
+
+The supported roles are `ADMIN`, `OPERATIONS`, and `SALES`. Inventory is represented by location-aware `Item` records with physical, reserved, and derived available quantities. Work orders calculate `shortage = max(required - available, 0)` without mutating inventory. Transfers use `REQUESTED -> DISPATCHED -> RECEIVED`: dispatch locks the source item and decrements physical stock; receipt creates or updates the destination SKU and increments physical stock. Repeated or out-of-order transitions return `422`.
+
+Customer orders are created by Sales and reserve available stock inside a PostgreSQL transaction. Each item row is locked with `SELECT ... FOR UPDATE`; an insufficient or concurrent request rolls back completely. Cancellation emits `RELEASE` movements and restores availability. Operations endpoints are mounted under `/api`: `/inventory`, `/work-orders`, `/transfers`, `/customer-orders`, `/customers`, `/dashboard/stats`, and `/auth`.
 
 ---
 
 ## 1. High-Level Design Diagram
 
 ```
-       User (Admin, Sales, Warehouse, Accounts)
+      User (Admin, Operations, Sales)
          |
          v
   +------------------+
@@ -59,10 +65,9 @@ The backend strictly protects individual routes by wrapping them in the `authori
 
 ### Selected Matrix Rules
 
-* **ADMIN**: Full global read and write privileges across all modules, including user profiles, products, stock levels, sales challans, and CRM follow-ups.
-* **SALES**: Full CRM CRUD management, follow-up logging, creating draft challans, editing draft challans, and confirming challans. View-only access for product stocks. Cannot modify product records or perform manual inventory adjustments.
-* **WAREHOUSE**: Read-only product lists. Full authority to log manual Stock IN/OUT movements. Read-only access to sales challan logs to prepare dispatches. No CRM permissions.
-* **ACCOUNTS**: Read-only view of customers CRM, products, and sales challans. Cannot edit any files, confirm challans, or manipulate stock.
+* **ADMIN**: Full access to inventory, work orders, transfers, customer orders, CRM, and legacy audit views.
+* **OPERATIONS**: Inventory, work orders, material checks, and internal transfer lifecycle. Cannot create or reserve customer orders.
+* **SALES**: Customer management, customer orders, and reservations. Inventory is read-only; Operations actions return `403`.
 
 ---
 

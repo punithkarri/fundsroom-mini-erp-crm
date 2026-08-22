@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import prisma from '../config/db';
-import { ChallanStatus, CustomerStatus } from '@prisma/client';
+import { ChallanStatus, CustomerStatus, CustomerOrderStatus, TransferStatus, WorkOrderStatus } from '@prisma/client';
 
 export const getDashboardStats = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -99,6 +99,17 @@ export const getDashboardStats = async (req: Request, res: Response, next: NextF
       },
     });
 
+    const [totalInventory, totalLocations, lowInventory, openWorkOrders, pendingTransfers, pendingReservations, shortageOrders] = await Promise.all([
+      prisma.item.count(),
+      prisma.location.count(),
+      prisma.item.count({ where: { physicalQuantity: { lte: prisma.item.fields.minimumStock } } }),
+      prisma.workOrder.count({ where: { status: { not: WorkOrderStatus.COMPLETED } } }),
+      prisma.internalTransfer.count({ where: { status: { in: [TransferStatus.REQUESTED, TransferStatus.DISPATCHED] } } }),
+      prisma.customerOrder.count({ where: { status: CustomerOrderStatus.PENDING } }),
+      prisma.workOrder.findMany({ where: { status: { not: WorkOrderStatus.COMPLETED } }, select: { requiredQuantity: true, item: { select: { physicalQuantity: true, reservedQuantity: true } } } }),
+    ]);
+    const shortages = shortageOrders.filter((order) => order.requiredQuantity > order.item.physicalQuantity - order.item.reservedQuantity).length;
+
     return res.status(200).json({
       success: true,
       data: {
@@ -116,6 +127,15 @@ export const getDashboardStats = async (req: Request, res: Response, next: NextF
         recentStockMovements,
         lowStockProducts,
         upcomingFollowUps,
+        operations: {
+          totalInventory,
+          totalLocations,
+          lowInventory,
+          openWorkOrders,
+          shortages,
+          pendingTransfers,
+          pendingReservations,
+        },
       },
     });
   } catch (err) {

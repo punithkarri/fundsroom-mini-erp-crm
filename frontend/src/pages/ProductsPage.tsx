@@ -217,7 +217,7 @@ const ProductsPage: React.FC = () => {
     }
   };
 
-  const isWarehouseAllowed = hasRole(['ADMIN', 'WAREHOUSE']);
+  const isWarehouseAllowed = hasRole(['ADMIN', 'OPERATIONS']);
   const isAdmin = hasRole(['ADMIN']);
 
   return (

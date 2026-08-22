@@ -10,8 +10,37 @@ generator client {
 enum Role {
   ADMIN
   SALES
+  OPERATIONS
+  // Retained for legacy records during migration.
   WAREHOUSE
   ACCOUNTS
+}
+
+enum WorkOrderStatus {
+  ASSIGNED
+  IN_PROGRESS
+  COMPLETED
+}
+
+enum TransferStatus {
+  REQUESTED
+  DISPATCHED
+  RECEIVED
+}
+
+enum CustomerOrderStatus {
+  PENDING
+  RESERVED
+  CANCELLED
+}
+
+enum InventoryMovementType {
+  IN
+  OUT
+  TRANSFER_OUT
+  TRANSFER_IN
+  RESERVATION
+  RELEASE
 }
 
 enum CustomerType {
@@ -38,16 +67,20 @@ enum ChallanStatus {
 }
 
 model User {
-  id           String             @id @default(uuid())
-  name         String
-  email        String             @unique
-  passwordHash String
-  role         Role
-  createdAt    DateTime           @default(now())
-  updatedAt    DateTime           @updatedAt
-  followUps    CustomerFollowUp[]
-  challans     SalesChallan[]
-  movements    StockMovement[]
+  id                 String              @id @default(uuid())
+  name               String
+  email              String              @unique
+  passwordHash       String
+  role               Role
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  followUps          CustomerFollowUp[]
+  challans           SalesChallan[]
+  movements          StockMovement[]
+  assignedWorkOrders WorkOrder[]         @relation("AssignedWorkOrders")
+  requestedTransfers InternalTransfer[]  @relation("RequestedTransfers")
+  createdOrders      CustomerOrder[]     @relation("CreatedOrders")
+  inventoryMovements InventoryMovement[]
 }
 
 model Customer {
@@ -66,17 +99,18 @@ model Customer {
   updatedAt    DateTime           @updatedAt
   followUps    CustomerFollowUp[]
   challans     SalesChallan[]
+  orders       CustomerOrder[]
 }
 
 model CustomerFollowUp {
-  id           String    @id @default(uuid())
+  id           String   @id @default(uuid())
   customerId   String
-  customer     Customer  @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  customer     Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
   note         String
   followUpDate DateTime
   createdBy    String
-  creator      User      @relation(fields: [createdBy], references: [id])
-  createdAt    DateTime  @default(now())
+  creator      User     @relation(fields: [createdBy], references: [id])
+  createdAt    DateTime @default(now())
 }
 
 model Product {
@@ -131,4 +165,135 @@ model SalesChallanItem {
   unitPriceSnapshot   Decimal      @db.Decimal(12, 2)
   quantity            Int
   totalPrice          Decimal      @db.Decimal(12, 2)
+}
+
+model Category {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  items     Item[]
+}
+
+model Location {
+  id                   String              @id @default(uuid())
+  name                 String
+  code                 String              @unique
+  createdAt            DateTime            @default(now())
+  updatedAt            DateTime            @updatedAt
+  items                Item[]
+  workOrders           WorkOrder[]
+  sourceTransfers      InternalTransfer[]  @relation("SourceTransfers")
+  destinationTransfers InternalTransfer[]  @relation("DestinationTransfers")
+  movements            InventoryMovement[]
+
+  @@index([name])
+}
+
+model Item {
+  id               String              @id @default(uuid())
+  sku              String
+  name             String
+  categoryId       String
+  category         Category            @relation(fields: [categoryId], references: [id])
+  unit             String              @default("units")
+  batch            String?
+  physicalQuantity Int                 @default(0)
+  reservedQuantity Int                 @default(0)
+  minimumStock     Int                 @default(0)
+  locationId       String
+  location         Location            @relation(fields: [locationId], references: [id])
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
+  workOrders       WorkOrder[]
+  transferItems    InternalTransfer[]
+  orderItems       CustomerOrderItem[]
+  movements        InventoryMovement[]
+
+  @@unique([sku, locationId])
+  @@index([locationId])
+  @@index([categoryId])
+}
+
+model WorkOrder {
+  id               String          @id @default(uuid())
+  workOrderNumber  String          @unique
+  locationId       String
+  location         Location        @relation(fields: [locationId], references: [id])
+  itemId           String
+  item             Item            @relation(fields: [itemId], references: [id])
+  requiredQuantity Int
+  assignedUserId   String
+  assignedUser     User            @relation("AssignedWorkOrders", fields: [assignedUserId], references: [id])
+  status           WorkOrderStatus @default(ASSIGNED)
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+
+  @@index([status])
+}
+
+model InternalTransfer {
+  id                    String         @id @default(uuid())
+  transferNumber        String         @unique
+  sourceLocationId      String
+  sourceLocation        Location       @relation("SourceTransfers", fields: [sourceLocationId], references: [id])
+  destinationLocationId String
+  destinationLocation   Location       @relation("DestinationTransfers", fields: [destinationLocationId], references: [id])
+  itemId                String
+  item                  Item           @relation(fields: [itemId], references: [id])
+  quantity              Int
+  requestedById         String
+  requestedBy           User           @relation("RequestedTransfers", fields: [requestedById], references: [id])
+  status                TransferStatus @default(REQUESTED)
+  createdAt             DateTime       @default(now())
+  updatedAt             DateTime       @updatedAt
+  dispatchedAt          DateTime?
+  receivedAt            DateTime?
+
+  @@index([status])
+}
+
+model CustomerOrder {
+  id          String              @id @default(uuid())
+  orderNumber String              @unique
+  customerId  String
+  customer    Customer            @relation(fields: [customerId], references: [id])
+  createdById String
+  createdBy   User                @relation("CreatedOrders", fields: [createdById], references: [id])
+  status      CustomerOrderStatus @default(PENDING)
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+  items       CustomerOrderItem[]
+
+  @@index([status])
+}
+
+model CustomerOrderItem {
+  id               String        @id @default(uuid())
+  orderId          String
+  order            CustomerOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  itemId           String
+  item             Item          @relation(fields: [itemId], references: [id])
+  quantity         Int
+  reservedQuantity Int           @default(0)
+  unitPrice        Decimal?      @db.Decimal(12, 2)
+  createdAt        DateTime      @default(now())
+}
+
+model InventoryMovement {
+  id            String                @id @default(uuid())
+  itemId        String
+  item          Item                  @relation(fields: [itemId], references: [id])
+  locationId    String
+  location      Location              @relation(fields: [locationId], references: [id])
+  quantity      Int
+  movementType  InventoryMovementType
+  reason        String
+  referenceType String?
+  referenceId   String?
+  createdById   String
+  createdBy     User                  @relation(fields: [createdById], references: [id])
+  createdAt     DateTime              @default(now())
+
+  @@index([itemId, locationId, createdAt])
 }

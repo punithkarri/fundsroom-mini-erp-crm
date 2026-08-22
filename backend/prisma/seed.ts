@@ -1,4 +1,4 @@
-import { PrismaClient, Role, CustomerType, CustomerStatus, MovementType, ChallanStatus } from '@prisma/client';
+import { PrismaClient, Role, CustomerType, CustomerStatus, MovementType, ChallanStatus, InventoryMovementType } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
@@ -9,6 +9,14 @@ async function main() {
   // 1. Clean existing data
   await prisma.salesChallanItem.deleteMany();
   await prisma.salesChallan.deleteMany();
+  await prisma.inventoryMovement.deleteMany();
+  await prisma.customerOrderItem.deleteMany();
+  await prisma.customerOrder.deleteMany();
+  await prisma.internalTransfer.deleteMany();
+  await prisma.workOrder.deleteMany();
+  await prisma.item.deleteMany();
+  await prisma.category.deleteMany();
+  await prisma.location.deleteMany();
   await prisma.stockMovement.deleteMany();
   await prisma.customerFollowUp.deleteMany();
   await prisma.product.deleteMany();
@@ -19,10 +27,13 @@ async function main() {
 
   // 2. Create Users
   const saltRounds = 10;
-  const adminPasswordHash = await bcrypt.hash('Admin@123', saltRounds);
-  const salesPasswordHash = await bcrypt.hash('Sales@123', saltRounds);
-  const warehousePasswordHash = await bcrypt.hash('Warehouse@123', saltRounds);
-  const accountsPasswordHash = await bcrypt.hash('Accounts@123', saltRounds);
+  const seedPasswords = [process.env.SEED_ADMIN_PASSWORD, process.env.SEED_OPERATIONS_PASSWORD, process.env.SEED_SALES_PASSWORD];
+  if (seedPasswords.some((password) => !password)) {
+    throw new Error('SEED_ADMIN_PASSWORD, SEED_OPERATIONS_PASSWORD, and SEED_SALES_PASSWORD must be configured');
+  }
+  const adminPasswordHash = await bcrypt.hash(seedPasswords[0]!, saltRounds);
+  const salesPasswordHash = await bcrypt.hash(seedPasswords[2]!, saltRounds);
+  const operationsPasswordHash = await bcrypt.hash(seedPasswords[1]!, saltRounds);
 
   const adminUser = await prisma.user.create({
     data: {
@@ -42,21 +53,12 @@ async function main() {
     },
   });
 
-  const warehouseUser = await prisma.user.create({
+  const operationsUser = await prisma.user.create({
     data: {
       name: 'Baldev Singh',
-      email: 'warehouse@example.com',
-      passwordHash: warehousePasswordHash,
-      role: Role.WAREHOUSE,
-    },
-  });
-
-  const accountsUser = await prisma.user.create({
-    data: {
-      name: 'Suresh Iyer',
-      email: 'accounts@example.com',
-      passwordHash: accountsPasswordHash,
-      role: Role.ACCOUNTS,
+      email: 'operations@example.com',
+      passwordHash: operationsPasswordHash,
+      role: Role.OPERATIONS,
     },
   });
 
@@ -227,7 +229,7 @@ async function main() {
         quantityChanged: prod.currentStock,
         movementType: MovementType.IN,
         reason: 'Initial Seeding Balance Entry',
-        createdBy: warehouseUser.id,
+        createdBy: operationsUser.id,
         createdAt: new Date('2026-08-01T08:00:00Z'),
       },
     });
@@ -397,6 +399,56 @@ async function main() {
   });
 
   console.log('Created Sales Challans.');
+
+  // 8. Create location-aware Operations ERP inventory
+  const [pipesCategory, fittingsCategory] = await Promise.all([
+    prisma.category.create({ data: { name: 'Operations Pipes' } }),
+    prisma.category.create({ data: { name: 'Operations Fittings' } }),
+  ]);
+  const [centralLocation, southLocation] = await Promise.all([
+    prisma.location.create({ data: { name: 'Central Warehouse', code: 'CENTRAL' } }),
+    prisma.location.create({ data: { name: 'South Depot', code: 'SOUTH' } }),
+  ]);
+  const operationsItem = await prisma.item.create({
+    data: {
+      sku: 'OPS-PIP-001',
+      name: 'Operations Steel Pipe',
+      categoryId: pipesCategory.id,
+      locationId: centralLocation.id,
+      physicalQuantity: 100,
+      minimumStock: 20,
+    },
+  });
+  await prisma.inventoryMovement.create({
+    data: {
+      itemId: operationsItem.id,
+      locationId: centralLocation.id,
+      quantity: 100,
+      movementType: InventoryMovementType.IN,
+      reason: 'Initial Operations inventory balance',
+      createdById: operationsUser.id,
+    },
+  });
+  await prisma.item.create({
+    data: {
+      sku: 'OPS-FIT-001',
+      name: 'Operations Brass Fitting',
+      categoryId: fittingsCategory.id,
+      locationId: southLocation.id,
+      physicalQuantity: 40,
+      minimumStock: 10,
+    },
+  });
+  await prisma.workOrder.create({
+    data: {
+      workOrderNumber: 'WO-2026-000001',
+      locationId: centralLocation.id,
+      itemId: operationsItem.id,
+      requiredQuantity: 120,
+      assignedUserId: operationsUser.id,
+    },
+  });
+  console.log('Created Operations ERP inventory and work order.');
   console.log('Database seeding complete successfully!');
 }
 

@@ -12,11 +12,11 @@ import { Role } from '@prisma/client';
 
 const router = Router();
 
-// Retrieve customers - Admin, Sales, Accounts
+// Retrieve customers - Admin, Sales
 router.get(
   '/',
   authenticate,
-  authorize(Role.ADMIN, Role.SALES, Role.ACCOUNTS),
+  authorize(Role.ADMIN, Role.SALES),
   getCustomers
 );
 
@@ -28,11 +28,11 @@ router.post(
   createCustomer
 );
 
-// Get specific customer detail - Admin, Sales, Accounts
+// Get specific customer detail - Admin, Sales
 router.get(
   '/:id',
   authenticate,
-  authorize(Role.ADMIN, Role.SALES, Role.ACCOUNTS),
+  authorize(Role.ADMIN, Role.SALES),
   getCustomerById
 );
 

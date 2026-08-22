@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { CustomerType, CustomerStatus, Role, ChallanStatus } from '@prisma/client';
+import { CustomerType, CustomerStatus, Role, ChallanStatus, WorkOrderStatus } from '@prisma/client';
 
 // Helper: Indian GST Validation (15 alphanumeric characters)
 const gstRegex = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/;
@@ -74,4 +74,54 @@ export const challanSchema = z.object({
   customerId: z.string().uuid('Invalid Customer ID'),
   items: z.array(challanItemSchema).min(1, 'Challan must contain at least one item'),
   status: z.nativeEnum(ChallanStatus).optional().default(ChallanStatus.DRAFT),
+});
+
+const positiveInt = z.number().int().positive('Quantity must be a positive integer');
+
+export const inventorySchema = z.object({
+  sku: z.string().min(1).toUpperCase(),
+  name: z.string().min(2),
+  categoryId: z.string().uuid(),
+  locationId: z.string().uuid(),
+  unit: z.string().min(1).default('units'),
+  batch: z.string().optional().nullable(),
+  physicalQuantity: z.number().int().nonnegative(),
+  reservedQuantity: z.number().int().nonnegative().default(0),
+  minimumStock: z.number().int().nonnegative().default(0),
+}).refine((value) => value.reservedQuantity <= value.physicalQuantity, {
+  message: 'Reserved quantity cannot exceed physical quantity',
+  path: ['reservedQuantity'],
+});
+
+export const workOrderSchema = z.object({
+  workOrderNumber: z.string().min(2),
+  locationId: z.string().uuid(),
+  itemId: z.string().uuid(),
+  requiredQuantity: positiveInt,
+  assignedUserId: z.string().uuid(),
+});
+
+export const workOrderStatusSchema = z.object({
+  status: z.nativeEnum(WorkOrderStatus),
+});
+
+export const transferSchema = z.object({
+  transferNumber: z.string().min(2),
+  sourceLocationId: z.string().uuid(),
+  destinationLocationId: z.string().uuid(),
+  itemId: z.string().uuid(),
+  quantity: positiveInt,
+}).refine((value) => value.sourceLocationId !== value.destinationLocationId, {
+  message: 'Source and destination locations must be different',
+  path: ['destinationLocationId'],
+});
+
+export const customerOrderSchema = z.object({
+  orderNumber: z.string().min(2),
+  customerId: z.string().uuid(),
+  items: z.array(z.object({
+    itemId: z.string().uuid(),
+    quantity: positiveInt,
+    unitPrice: z.number().nonnegative().optional(),
+  })).min(1),
 });

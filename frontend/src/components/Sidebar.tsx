@@ -6,6 +6,8 @@ import {
   Users,
   Package,
   FileText,
+  ClipboardList,
+  UserCog,
   LogOut,
   User as UserIcon,
 } from 'lucide-react';
@@ -32,6 +34,18 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
   // Define navigation items based on Role permissions
   const menuItems = [
     {
+      to: '/users',
+      label: 'Users',
+      icon: <UserCog size={18} />,
+      show: isRole(['ADMIN']),
+    },
+    {
+      to: '/operations',
+      label: 'Operations ERP',
+      icon: <ClipboardList size={18} />,
+      show: true,
+    },
+    {
       to: '/dashboard',
       label: 'Dashboard',
       icon: <LayoutDashboard size={18} />,
@@ -41,19 +55,19 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
       to: '/customers',
       label: 'Customers CRM',
       icon: <Users size={18} />,
-      show: isRole(['ADMIN', 'SALES', 'ACCOUNTS']),
+      show: isRole(['ADMIN', 'SALES']),
     },
     {
       to: '/products',
       label: 'Products & Stock',
       icon: <Package size={18} />,
-      show: isRole(['ADMIN', 'SALES', 'WAREHOUSE', 'ACCOUNTS']),
+      show: isRole(['ADMIN', 'SALES', 'OPERATIONS']),
     },
     {
       to: '/challans',
       label: 'Sales Challans',
       icon: <FileText size={18} />,
-      show: isRole(['ADMIN', 'SALES', 'WAREHOUSE', 'ACCOUNTS']),
+      show: isRole(['ADMIN', 'SALES', 'OPERATIONS']),
     },
   ];
 

@@ -16,7 +16,7 @@ const router = Router();
 router.get(
   '/',
   authenticate,
-  authorize(Role.ADMIN, Role.SALES, Role.WAREHOUSE, Role.ACCOUNTS),
+  authorize(Role.ADMIN, Role.SALES, Role.OPERATIONS),
   getChallans
 );
 
@@ -32,7 +32,7 @@ router.post(
 router.get(
   '/:id',
   authenticate,
-  authorize(Role.ADMIN, Role.SALES, Role.WAREHOUSE, Role.ACCOUNTS),
+  authorize(Role.ADMIN, Role.SALES, Role.OPERATIONS),
   getChallanById
 );
 

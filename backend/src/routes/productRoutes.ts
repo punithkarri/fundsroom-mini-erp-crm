@@ -17,7 +17,7 @@ const router = Router();
 router.get(
   '/',
   authenticate,
-  authorize(Role.ADMIN, Role.SALES, Role.WAREHOUSE, Role.ACCOUNTS),
+  authorize(Role.ADMIN, Role.SALES, Role.OPERATIONS),
   getProducts
 );
 
@@ -33,7 +33,7 @@ router.post(
 router.get(
   '/:id',
   authenticate,
-  authorize(Role.ADMIN, Role.SALES, Role.WAREHOUSE, Role.ACCOUNTS),
+  authorize(Role.ADMIN, Role.SALES, Role.OPERATIONS),
   getProductById
 );
 
@@ -45,27 +45,27 @@ router.put(
   updateProduct
 );
 
-// Read stock movements - Admin, Warehouse
+// Read stock movements - Admin, Operations
 router.get(
   '/:id/stock-movements',
   authenticate,
-  authorize(Role.ADMIN, Role.WAREHOUSE),
+  authorize(Role.ADMIN, Role.OPERATIONS),
   getStockMovements
 );
 
-// Stock entry manual IN - Admin, Warehouse
+// Stock entry manual IN - Admin, Operations
 router.post(
   '/:id/stock-in',
   authenticate,
-  authorize(Role.ADMIN, Role.WAREHOUSE),
+  authorize(Role.ADMIN, Role.OPERATIONS),
   stockIn
 );
 
-// Stock entry manual OUT - Admin, Warehouse
+// Stock entry manual OUT - Admin, Operations
 router.post(
   '/:id/stock-out',
   authenticate,
-  authorize(Role.ADMIN, Role.WAREHOUSE),
+  authorize(Role.ADMIN, Role.OPERATIONS),
   stockOut
 );
 

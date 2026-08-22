@@ -1,5 +1,14 @@
 # Demonstration Screen Recording Script
 
+## Primary Operations ERP Walkthrough
+
+1. Log in as Admin, Operations, and Sales to show the three role contracts and JWT session handling.
+2. Open Operations ERP and show physical, reserved, available, minimum, category, SKU, and location columns.
+3. Create a work order and open material check. Show Required, Available, and Shortage; confirm inventory is unchanged.
+4. Create an internal transfer. Dispatch it and show source physical stock decreases while destination remains unchanged. Receive it and show destination physical stock increases. Attempt a duplicate receipt and show the `422` rejection.
+5. Create a Sales customer order and reserve stock. Show reserved quantity increasing and available quantity decreasing while physical quantity remains unchanged. Attempt an over-reservation.
+6. Run `npm run test:operations` and show the concurrent reservation result: one request succeeds, one fails, and the final balance never goes negative.
+
 This script outlines the timeline, scene configuration, and speaking points for a 5-10 minute video walkthrough of the **FundsRoom Mini ERP + CRM Portal** to demonstrate the code architecture and core business features.
 
 ---
@@ -15,7 +24,7 @@ This script outlines the timeline, scene configuration, and speaking points for 
 * **Speaking Points**: "The backend is powered by Node.js, Express, and TypeScript, communicating with a Neon serverless PostgreSQL database using Prisma ORM. The frontend is built as a single-page application using React, Vite, and custom CSS variables. Authentication is stateless via JSON Web Tokens, and we employ database transactions with row-level locks to maintain inventory consistency."
 
 ### 3. User Authentication & RBAC (01:00 – 02:00)
-* **Visual**: Log in as `admin@example.com` (password: `Admin@123`). Show the UI load. Then log out, and log back in as `sales@example.com` (password: `Sales@123`), pointing out the sidebar changes.
+* **Visual**: Log in as the locally configured Admin account. Show the UI load. Then log out, and log back in as the locally configured Sales account, pointing out the sidebar changes.
 * **Speaking Points**: "We have four pre-seeded roles: Admin, Sales, Warehouse, and Accounts. The system enforces strict Role-Based Access Control. Notice how the Admin has access to the full dashboard, while logging in as a Sales user hides administrative settings and limits actions to customer management and challan editing."
 
 ### 4. Admin Dashboard Overview (02:00 – 03:00)

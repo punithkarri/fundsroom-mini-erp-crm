@@ -820,6 +820,51 @@
       ]
     },
     {
+      "name": "Operations ERP",
+      "item": [
+        {
+          "name": "Inventory",
+          "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/api/inventory" }
+        },
+        {
+          "name": "Work Orders",
+          "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/api/work-orders" }
+        },
+        {
+          "name": "Material Check",
+          "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/api/work-orders/{{workOrderId}}/material-check" }
+        },
+        {
+          "name": "Transfers",
+          "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/api/transfers" }
+        },
+        {
+          "name": "Dispatch Transfer",
+          "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/api/transfers/{{transferId}}/dispatch" }
+        },
+        {
+          "name": "Receive Transfer",
+          "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/api/transfers/{{transferId}}/receive" }
+        },
+        {
+          "name": "Customers",
+          "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/api/customers" }
+        },
+        {
+          "name": "Customer Orders",
+          "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/api/customer-orders" }
+        },
+        {
+          "name": "Reserve Customer Order",
+          "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/api/customer-orders/{{orderId}}/reserve" }
+        },
+        {
+          "name": "Dashboard Stats",
+          "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/api/dashboard/stats" }
+        }
+      ]
+    },
+    {
       "name": "System Health",
       "item": [
         {

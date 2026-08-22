@@ -1,4 +1,10 @@
-# FundsRoom — Mini ERP + CRM Operations Portal
+# FundsRoom — Mini Operations ERP + CRM Portal
+
+## Primary Operations ERP Scope
+
+The application is organized around three roles: `ADMIN`, `OPERATIONS`, and `SALES`. Location-aware inventory tracks physical and reserved quantities and derives available stock as `physical - reserved`. Work orders expose material shortage without changing stock. Internal transfers use transactional dispatch and receipt states, with row locks, duplicate-transition protection, source decrement at dispatch, and destination increment only at receipt. Sales customer orders reserve available stock transactionally; cancellation releases it.
+
+The operational verification path is login, inventory, work-order material check, transfer dispatch/receipt, customer-order reservation, over-reservation rejection, duplicate receipt rejection, unauthorized action rejection, and concurrent reservation locking. The executable suite is `npm run test:operations`.
 
 Technical Case Study — Round 1 Submission Document  
 **Author**: Punith Karri  
@@ -313,7 +319,7 @@ Complete REST API endpoint list for the portal. All protected routes require an 
 ### 11.1 Authentication
 * `POST /api/auth/login`
   * **Purpose**: Sign in users and issue JWT.
-  * **Payload**: `{ "email": "sales@example.com", "password": "Sales@123" }`
+  * **Payload**: `{ "email": "sales@example.com", "password": "<configured seed password>" }`
   * **Response**: `{ "token": "...", "user": { "id": "...", "name": "...", "role": "SALES" } }`
 * `GET /api/auth/me`
   * **Purpose**: Fetch profile data for the current authenticated token.
@@ -476,10 +482,9 @@ npm run prisma:seed
 
 To evaluate the role restriction mappings, sign in using the following test accounts:
 
-* **ADMIN (Full Access)**: `admin@example.com` / `Admin@123`
-* **SALES (CRM & Challans)**: `sales@example.com` / `Sales@123`
-* **WAREHOUSE (Stock Logs)**: `warehouse@example.com` / `Warehouse@123`
-* **ACCOUNTS (Read-Only)**: `accounts@example.com` / `Accounts@123`
+* **ADMIN (Full Access)**: `admin@example.com` with the locally configured seed password.
+* **OPERATIONS (Inventory and Fulfillment)**: `operations@example.com` with the locally configured seed password.
+* **SALES (Customers and Reservations)**: `sales@example.com` with the locally configured seed password.
 
 ---
 

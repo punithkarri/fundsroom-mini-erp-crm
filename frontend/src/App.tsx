@@ -12,6 +12,8 @@ import ProductsPage from './pages/ProductsPage';
 import ChallansPage from './pages/ChallansPage';
 import CreateChallanPage from './pages/CreateChallanPage';
 import ChallanDetailPage from './pages/ChallanDetailPage';
+import OperationsPage from './pages/OperationsPage';
+import UsersPage from './pages/UsersPage';
 
 const App: React.FC = () => {
   return (
@@ -32,9 +34,20 @@ const App: React.FC = () => {
           />
 
           <Route
+            path="/operations"
+            element={
+              <ProtectedRoute allowedRoles={['ADMIN', 'OPERATIONS', 'SALES']}>
+                <OperationsPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route path="/users" element={<ProtectedRoute allowedRoles={['ADMIN']}><UsersPage /></ProtectedRoute>} />
+
+          <Route
             path="/customers"
             element={
-              <ProtectedRoute allowedRoles={['ADMIN', 'SALES', 'ACCOUNTS']}>
+              <ProtectedRoute allowedRoles={['ADMIN', 'SALES']}>
                 <CustomersPage />
               </ProtectedRoute>
             }
@@ -43,7 +56,7 @@ const App: React.FC = () => {
           <Route
             path="/customers/:id"
             element={
-              <ProtectedRoute allowedRoles={['ADMIN', 'SALES', 'ACCOUNTS']}>
+              <ProtectedRoute allowedRoles={['ADMIN', 'SALES']}>
                 <CustomerDetailPage />
               </ProtectedRoute>
             }
@@ -52,7 +65,7 @@ const App: React.FC = () => {
           <Route
             path="/products"
             element={
-              <ProtectedRoute allowedRoles={['ADMIN', 'SALES', 'WAREHOUSE', 'ACCOUNTS']}>
+              <ProtectedRoute allowedRoles={['ADMIN', 'SALES', 'OPERATIONS']}>
                 <ProductsPage />
               </ProtectedRoute>
             }
@@ -61,7 +74,7 @@ const App: React.FC = () => {
           <Route
             path="/challans"
             element={
-              <ProtectedRoute allowedRoles={['ADMIN', 'SALES', 'WAREHOUSE', 'ACCOUNTS']}>
+              <ProtectedRoute allowedRoles={['ADMIN', 'SALES', 'OPERATIONS']}>
                 <ChallansPage />
               </ProtectedRoute>
             }
@@ -79,7 +92,7 @@ const App: React.FC = () => {
           <Route
             path="/challans/:id"
             element={
-              <ProtectedRoute allowedRoles={['ADMIN', 'SALES', 'WAREHOUSE', 'ACCOUNTS']}>
+              <ProtectedRoute allowedRoles={['ADMIN', 'SALES', 'OPERATIONS']}>
                 <ChallanDetailPage />
               </ProtectedRoute>
             }

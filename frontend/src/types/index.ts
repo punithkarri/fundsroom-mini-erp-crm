@@ -1,4 +1,4 @@
-export type Role = 'ADMIN' | 'SALES' | 'WAREHOUSE' | 'ACCOUNTS';
+export type Role = 'ADMIN' | 'OPERATIONS' | 'SALES';
 
 export type CustomerType = 'RETAIL' | 'WHOLESALE' | 'DISTRIBUTOR';
 
@@ -135,4 +135,47 @@ export interface DashboardStats {
     followUpDate: string;
     notes: string | null;
   }>;
+}
+
+export interface InventoryItem {
+  id: string;
+  sku: string;
+  name: string;
+  unit: string;
+  batch: string | null;
+  physicalQuantity: number;
+  reservedQuantity: number;
+  availableQuantity: number;
+  minimumStock: number;
+  category?: { id: string; name: string };
+  location?: { id: string; name: string; code: string };
+  locationId: string;
+}
+
+export interface WorkOrder {
+  id: string;
+  workOrderNumber: string;
+  requiredQuantity: number;
+  availableQuantity: number;
+  shortage: number;
+  status: 'ASSIGNED' | 'IN_PROGRESS' | 'COMPLETED';
+  item: InventoryItem;
+}
+
+export interface InternalTransfer {
+  id: string;
+  transferNumber: string;
+  quantity: number;
+  status: 'REQUESTED' | 'DISPATCHED' | 'RECEIVED';
+  item: InventoryItem;
+  sourceLocation: { id: string; name: string; code: string };
+  destinationLocation: { id: string; name: string; code: string };
+}
+
+export interface CustomerOrder {
+  id: string;
+  orderNumber: string;
+  status: 'PENDING' | 'RESERVED' | 'CANCELLED';
+  customer: Customer;
+  items: Array<{ item: InventoryItem; quantity: number; reservedQuantity: number }>;
 }

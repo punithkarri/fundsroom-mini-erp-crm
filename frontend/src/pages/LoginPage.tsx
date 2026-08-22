@@ -33,11 +33,6 @@ const LoginPage: React.FC = () => {
     }
   };
 
-  const fillCredentials = (roleEmail: string, rolePass: string) => {
-    setEmail(roleEmail);
-    setPassword(rolePass);
-  };
-
   return (
     <div className="login-container">
       <div className="login-card">
@@ -87,23 +82,6 @@ const LoginPage: React.FC = () => {
           </button>
         </form>
 
-        <details className="login-credentials-helper">
-          <summary>🔑 Quick Demo Logins</summary>
-          <ul>
-            <li onClick={() => fillCredentials('admin@example.com', 'Admin@123')} style={{ cursor: 'pointer', padding: '4px', borderRadius: '4px', border: '1px dashed #cbd5e1', marginBottom: '6px', backgroundColor: '#ffffff' }}>
-              <strong>Admin:</strong> admin@example.com (Admin@123)
-            </li>
-            <li onClick={() => fillCredentials('sales@example.com', 'Sales@123')} style={{ cursor: 'pointer', padding: '4px', borderRadius: '4px', border: '1px dashed #cbd5e1', marginBottom: '6px', backgroundColor: '#ffffff' }}>
-              <strong>Sales:</strong> sales@example.com (Sales@123)
-            </li>
-            <li onClick={() => fillCredentials('warehouse@example.com', 'Warehouse@123')} style={{ cursor: 'pointer', padding: '4px', borderRadius: '4px', border: '1px dashed #cbd5e1', marginBottom: '6px', backgroundColor: '#ffffff' }}>
-              <strong>Warehouse:</strong> warehouse@example.com (Warehouse@123)
-            </li>
-            <li onClick={() => fillCredentials('accounts@example.com', 'Accounts@123')} style={{ cursor: 'pointer', padding: '4px', borderRadius: '4px', border: '1px dashed #cbd5e1', backgroundColor: '#ffffff' }}>
-              <strong>Accounts:</strong> accounts@example.com (Accounts@123)
-            </li>
-          </ul>
-        </details>
       </div>
     </div>
   );

@@ -21,10 +21,9 @@ Use these seeded accounts to evaluate role-based authorization (RBAC) behavior i
 
 | System Role | Test Email | Plain Text Password | Primary Responsibilities |
 | :--- | :--- | :--- | :--- |
-| **ADMIN** | `admin@example.com` | `Admin@123` | Full access: Users, Products, Stock In/Out, Challans, CRM |
-| **SALES** | `sales@example.com` | `Sales@123` | Customers CRM, Follow-ups, Create Draft Challans, Confirm/Cancel |
-| **WAREHOUSE** | `warehouse@example.com` | `Warehouse@123` | View Catalog, Manual Stock In/Out, Read Challans |
-| **ACCOUNTS** | `accounts@example.com` | `Accounts@123` | View-only: Customers list, Products list, Challans list |
+| **ADMIN** | `admin@example.com` | Configured locally | Full access: Users, inventory, work orders, transfers, orders, CRM |
+| **OPERATIONS** | `operations@example.com` | Configured locally | Inventory, work orders, material checks, transfers |
+| **SALES** | `sales@example.com` | Configured locally | Customers, customer orders, reservations |
 
 ---
 
